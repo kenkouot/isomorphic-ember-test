@@ -6,9 +6,9 @@ var config = require('./config');
 
 var localSettings = config.localSettings();
 
-var app = {};
+var internals = {};
 
-app.initialize = function() {
+internals.initialize = function() {
 	var server = new Hapi.createServer(localSettings.host, localSettings.port, {
 		// ez enable cross origin resource sharing
 		cors: true,
@@ -61,4 +61,14 @@ app.initialize = function() {
 	});
 };
 
-app.initialize();
+// Load the Ember runtime
+require('./dist/ember-runtime.prod');
+// This imports a transpiled
+var App = require('./modules/App').default;
+// Require models
+var Models = require('./modules/models');
+// Lets test to see that our models interact with each other
+var foo = App.Foo.create();
+console.log(foo.next());
+
+internals.initialize();

@@ -76,8 +76,27 @@ module.exports = function(grunt) {
 					cwd: './public'
 				}
 			}
-		}
-
+    },
+    transpile: {
+      main: {
+        type: 'cjs',
+        files: [{
+          cwd: 'src/',
+          expand: true,
+          src: ['**/*.js'],
+          dest: 'modules/'
+        }]
+      },
+      browser: {
+        type: 'amd',
+        files: [{
+          cwd: 'src/',
+          expand: true,
+          src: ['**/*.js'],
+          dest: 'public/scripts'
+        }]
+      }
+    }
 	});
 
 	// load plugins that provide tasks
@@ -85,6 +104,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-es6-module-transpiler');
 
 	grunt.registerTask('compileAssets', [
 		// first clean the directory
@@ -95,6 +115,8 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('default', [
 		'compileAssets',
+    'transpile:main',
+    'transpile:browser',
 		// copy to tmp folder
 		'copy:dev',
 		// watch task for dev
